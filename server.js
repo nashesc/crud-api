@@ -1,9 +1,13 @@
 import express from 'express';
+import swaggerUI from 'swagger-ui-express';
+import { readFileSync } from 'fs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const openApiSpec = JSON.parse(readFileSync('./openapi.json', 'utf-8'));
 
 app.use(express.json());
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(openApiSpec));
 
 let tasks = [
    { id: 1, title: "Backend Track Assignment 1 (Morning)", done: true },
