@@ -1,11 +1,5 @@
 import db from "../db.js"
 
-let tasks = [
-   { id: 1, title: "Backend Track Assignments (Morning)", done: true },
-   { id: 2, title: "Work Tasks (Afternoon)", done: true },
-   { id: 3, title: "Dance Training (Night)", done: false }
-]
-
 function rowToTask(row) {
    if (!row) return undefined
    return {
@@ -29,21 +23,19 @@ export function create(title) {
 }
 
 export function update(id, changes) {
-   const task = tasks.find(t => t.id === id);
-   if (!task) return undefined;
+   const existing = findById(id)
+   if (!existing) return undefined
 
-   if (changes.title !== undefined) {
-      task.title = changes.title
-   }
-   if (changes.done !== undefined) {
-      task.done = changes.done
-   }
-   return task;
+   const title = changes.title !== undefined ? changes.title : existing.title
+   const done = changes.done !== undefined ? changes.done : existing.done
+
+   db.prepare('UPDATE tasks SET title = ?, done = ? WHERE id = ?')
+     .run(title, done ? 1 : 0, id)
+
+   return findById(id)
 }
 
 export function remove(id) {
-   const index = tasks.findIndex(task => task.id === id);
-   if (index === -1) return false;
-   tasks.splice(index, 1);
-   return true;
+   const info = db.prepare('DELETE FROM tasks WHERE id = ?').run(id)
+   return info.changes > 0
 }
