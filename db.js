@@ -16,7 +16,7 @@ if (count === 0) {
    const insert = db.prepare('INSERT INTO tasks (title, done) VALUES (?, ?)')
    insert.run('Backend Track Assignments (Morning)', 1)
    insert.run('Work Tasks (Afternoon)', 1)
-   insert.run('Dance Training (Night)"', 0)
+   insert.run('Dance Training (Night)', 0)
 }
 
 export default db

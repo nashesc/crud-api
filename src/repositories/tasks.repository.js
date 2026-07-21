@@ -1,15 +1,26 @@
+import db from "../db.js"
+
 let tasks = [
    { id: 1, title: "Backend Track Assignments (Morning)", done: true },
    { id: 2, title: "Work Tasks (Afternoon)", done: true },
    { id: 3, title: "Dance Training (Night)", done: false }
 ]
 
+function rowToTask(row) {
+   if (!row) return undefined
+   return {
+      id: row.id,
+      title: row.title,
+      done: !!row.done
+   }
+}
+
 export function findAll() {
-   return tasks;
+   return db.prepare('SELECT * FROM tasks').all().map(rowToTask)
 }
 
 export function findById(id) {
-   return tasks.find(task => task.id === id);
+   return rowToTask(db.prepare('SELECT * FROM tasks WHERE id = ?').get(id))
 }
 
 export function create(title) {
