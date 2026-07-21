@@ -24,13 +24,8 @@ export function findById(id) {
 }
 
 export function create(title) {
-   const newTask = {
-      id: tasks.length > 0 ? Math.max(...tasks.map(task => task.id)) + 1 : 1, 
-      title,
-      done: false
-   }
-   tasks.push(newTask)
-   return newTask
+   const info = db.prepare('INSERT INTO tasks (title, done) VALUES (?, 0)').run(title)
+   return findById(info.lastInsertRowid)
 }
 
 export function update(id, changes) {
