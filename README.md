@@ -50,8 +50,6 @@ Opened `tasks.db` in DB Browser for SQLite and ran, among others:
 Any changes made this way are immediately reflected by the API on the next request — the
 API has no in-memory cache of its own; it queries the database fresh every time.
 
-![DB Browser](db-browser-screenshot.png)
-
 ## Swagger UI
 
 ![Swagger UI](image.png)
