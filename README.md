@@ -1,6 +1,18 @@
 # Task API
 
-A minimal CRUD API for managing a to-do list, built with Node.js and Express. In-memory storage — no database, data resets on server restart.
+A minimal CRUD API for managing a to-do list, built with Node.js, Express, and SQLite.
+
+## Why SQLite
+
+SQLite requires no separate database server — the entire database lives in a single file
+(`tasks.db`) in the project root. That makes it appropriate for a single-instance learning
+project: zero setup, zero configuration, and no extra process to run alongside the API.
+
+## Where the database lives
+
+`tasks.db` is created automatically in the project root the first time the server starts.
+It is not committed to the repository (see `.gitignore`) — each clone generates its own file
+and seeds it with 3 example tasks on first run.
 
 ## Install & Run
 
@@ -21,19 +33,24 @@ Server runs on http://localhost:3000. Swagger UI docs at http://localhost:3000/d
 | PUT    | /tasks/:id    | Update a task       |
 | DELETE | /tasks/:id    | Delete a task       |
 
+Data now persists across restarts — killing and restarting the server no longer clears tasks.
+
 ## Example request
 
-$ curl -i -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"Buy milk"}'
-HTTP/1.1 201 Created
-X-Powered-By: Express
-Content-Type: application/json; charset=utf-8
-Content-Length: 40
-ETag: W/"28-PpSBYV7i68cXyGc7AhjVpkZkY5Q"
-Date: Thu, 16 Jul 2026 04:04:21 GMT
-Connection: keep-alive
-Keep-Alive: timeout=5
+$ curl.exe -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"Buy milk"}'
 
 {"id":4,"title":"Buy milk","done":false}
+
+## Exploring the database directly
+
+Opened `tasks.db` in DB Browser for SQLite and ran, among others:
+
+    SELECT * FROM tasks WHERE done = 1;
+
+Any changes made this way are immediately reflected by the API on the next request — the
+API has no in-memory cache of its own; it queries the database fresh every time.
+
+![DB Browser](db-browser-screenshot.png)
 
 ## Swagger UI
 
