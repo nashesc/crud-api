@@ -54,4 +54,4 @@ API has no in-memory cache of its own; it queries the database fresh every time.
 
 ## Swagger UI
 
-![Swagger UI](image.png)
+![DB Browser](image-1.png)
