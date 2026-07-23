@@ -1,12 +1,12 @@
 import * as repo from '../repositories/tasks.repository.js';
 import { ValidationError, NotFoundError } from '../errors.js';
 
-export function getAllTasks() {
+export async function getAllTasks() {
    return repo.findAll();
 }
 
-export function getTaskById(id) {
-   const task = repo.findById(id);
+export async function getTaskById(id) {
+   const task = await repo.findById(id);
    if (!task) {
       throw new NotFoundError(`Task ${id} not found`);
    }

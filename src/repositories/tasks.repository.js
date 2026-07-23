@@ -1,20 +1,22 @@
-import db from "../db.js"
+import pool from "../db.js"
 
 function rowToTask(row) {
    if (!row) return undefined
    return {
       id: row.id,
       title: row.title,
-      done: !!row.done
+      done: row.done
    }
 }
 
-export function findAll() {
-   return db.prepare('SELECT * FROM tasks').all().map(rowToTask)
+export async function findAll() {
+   const { rows } = await pool.query('SELECT * FROM tasks')
+   return rows.map(rowToTask)
 }
 
-export function findById(id) {
-   return rowToTask(db.prepare('SELECT * FROM tasks WHERE id = ?').get(id))
+export async function findById(id) {
+   const { rows } = await pool.query('SELECT * FROM tasks WHERE id = $1', [id])
+   return rowToTask(rows[0])
 }
 
 export function create(title) {

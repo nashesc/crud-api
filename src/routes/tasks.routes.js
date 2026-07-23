@@ -5,13 +5,17 @@ const router = Router()
 
 
 
-router.get('/', (req, res) => {
-   res.json(service.getAllTasks())
+router.get('/', async (req, res, next) => {
+   try {
+      res.json(await service.getAllTasks())
+   } catch (error) {
+      next(err)
+   }
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
    try {
-      res.json(service.getTaskById(Number(req.params.id)))
+      res.json(await service.getTaskById(Number(req.params.id)))
    } catch (err) {
       next(err)
    }
