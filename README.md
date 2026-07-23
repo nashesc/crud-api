@@ -1,25 +1,38 @@
 # Task API
 
-A minimal CRUD API for managing a to-do list, built with Node.js, Express, and SQLite.
+A CRUD API for managing a to-do list, built with Node.js, Express, and PostgreSQL,
+running fully containerized via Docker Compose.
 
-## Why SQLite
+## Stack
 
-SQLite requires no separate database server — the entire database lives in a single file
-(`tasks.db`) in the project root. That makes it appropriate for a single-instance learning
-project: zero setup, zero configuration, and no extra process to run alongside the API.
+- Node.js + Express
+- PostgreSQL 16 (containerized)
+- Docker Compose (app + database, one command)
 
-## Where the database lives
+## Run it
 
-`tasks.db` is created automatically in the project root the first time the server starts.
-It is not committed to the repository (see `.gitignore`) — each clone generates its own file
-and seeds it with 3 example tasks on first run.
+    cp .env.example .env
+    docker compose up
 
-## Install & Run
+That's it — no local Node install, no local Postgres install. `docker compose up`
+builds the app image, starts Postgres, creates the `tasks` table if it doesn't exist,
+and seeds three example tasks on first run only.
 
-npm install
-npm start
+Server: http://localhost:3000
+Swagger UI: http://localhost:3000/docs
 
-Server runs on http://localhost:3000. Swagger UI docs at http://localhost:3000/docs.
+## Configuration
+
+Copy `.env.example` to `.env` before running. Variables:
+
+| Variable            | Meaning                                                                                                              |
+|---------------------|----------------------------------------------------------------------------------------------------------------------|
+| `PORT`              | Port the app listens on (default 3000)                                                                               |
+| `DATABASE_URL`      | Postgres connection string (used by the app)                                                                         |
+| `POSTGRES_PASSWORD` | Postgres password (used by `compose.yaml` to configure the `db` service — must match the password in `DATABASE_URL`) |
+
+`.env` is git-ignored — never commit real credentials. `.env.example` holds
+placeholder values so anyone cloning the repo knows which keys to set.
 
 ## Endpoints
 
@@ -33,35 +46,33 @@ Server runs on http://localhost:3000. Swagger UI docs at http://localhost:3000/d
 | PUT    | /tasks/:id    | Update a task       |
 | DELETE | /tasks/:id    | Delete a task       |
 
-Data now persists across restarts — killing and restarting the server no longer clears tasks.
-
 ## Example request
 
-$ curl.exe -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"Buy milk"}'
+    $ curl -i -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"Buy milk"}'
 
-{"id":4,"title":"Buy milk","done":false}
+    HTTP/1.1 201 Created
+    Content-Type: application/json
+
+    {"id":4,"title":"Buy milk","done":false}
+
+## Persistence
+
+Task data lives in a Postgres container backed by a named Docker volume
+(`taskdata`). Data survives `docker compose down` and a later `docker compose up`
+— the volume outlives the containers. It's only lost if you explicitly run
+`docker compose down -v`.
 
 ## Exploring the database directly
 
-Opened `tasks.db` in DB Browser for SQLite and ran, among others:
+    docker compose exec db psql -U postgres -d tasks
 
-    SELECT * FROM tasks WHERE done = 1;
+Then, inside psql:
 
-Any changes made this way are immediately reflected by the API on the next request — the
-API has no in-memory cache of its own; it queries the database fresh every time.
+    \dt
+    SELECT * FROM tasks;
 
-## Database
-
-Postgres runs in Docker. Start it with:
-
-    docker run --name taskdb -e POSTGRES_PASSWORD=dev -e POSTGRES_DB=tasks -p 5432:5432 -v taskdata:/var/lib/postgresql/data -d postgres
-
-Check it's running: `docker ps`. Open a SQL prompt: `docker exec -it taskdb psql -U postgres -d tasks`.
+![Postgres data](image-2.png)
 
 ## Swagger UI
 
 ![Swagger UI](image.png)
-
-## DB Browser
-
-![DB Browser](image-1.png)
