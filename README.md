@@ -50,6 +50,14 @@ Opened `tasks.db` in DB Browser for SQLite and ran, among others:
 Any changes made this way are immediately reflected by the API on the next request — the
 API has no in-memory cache of its own; it queries the database fresh every time.
 
+## Database
+
+Postgres runs in Docker. Start it with:
+
+    docker run --name taskdb -e POSTGRES_PASSWORD=dev -e POSTGRES_DB=tasks -p 5432:5432 -v taskdata:/var/lib/postgresql/data -d postgres
+
+Check it's running: `docker ps`. Open a SQL prompt: `docker exec -it taskdb psql -U postgres -d tasks`.
+
 ## Swagger UI
 
 ![Swagger UI](image.png)
