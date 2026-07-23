@@ -13,15 +13,15 @@ export async function getTaskById(id) {
    return task;
 }
 
-export function createTask(title) {
+export async function createTask(title) {
    if (!title || typeof title !== 'string' || title.trim() === '') {
       throw new ValidationError('Title is required')
    }
-   return repo.create(title)
+   return await repo.create(title)
 }
 
-export function updateTask(id, { title, done }) {
-   const existing = repo.findById(id)
+export async function updateTask(id, { title, done }) {
+   const existing = await repo.findById(id)
    if (!existing) {
       throw new NotFoundError(`Task ${id} not found`)
    }
@@ -33,8 +33,8 @@ export function updateTask(id, { title, done }) {
    return repo.update(id, { title, done })
 }
 
-export function deleteTask(id) {
-   const existing = repo.findById(id)
+export async function deleteTask(id) {
+   const existing = await repo.findById(id)
    if (!existing) {
       throw new NotFoundError(`Task ${id} not found`)
    }

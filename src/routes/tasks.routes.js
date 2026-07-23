@@ -21,25 +21,25 @@ router.get('/:id', async (req, res, next) => {
    }
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
    try {
-      res.status(201).json(service.createTask(req.body.title))
+      res.status(201).json(await service.createTask(req.body.title))
    } catch (err) {
       next(err)
    }
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
    try {
-      res.json(service.updateTask(Number(req.params.id), req.body))
+      res.json(await service.updateTask(Number(req.params.id), req.body))
    } catch (err) {
       next(err)
    }
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
    try {
-      service.deleteTask(Number(req.params.id))
+      await service.deleteTask(Number(req.params.id))
       res.status(204).send()
    } catch (err) {
       next(err)

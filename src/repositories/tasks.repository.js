@@ -19,25 +19,32 @@ export async function findById(id) {
    return rowToTask(rows[0])
 }
 
-export function create(title) {
-   const info = db.prepare('INSERT INTO tasks (title, done) VALUES (?, 0)').run(title)
-   return findById(info.lastInsertRowid)
+export async function create(title) {
+   const { rows } = await pool.query(
+      'INSERT INTO tasks (title, done) VALUES ($1, false) RETURNING *',
+      [title]
+   )
+   return rowToTask(rows[0])
 }
 
-export function update(id, changes) {
-   const existing = findById(id)
+export async function update(id, changes) {
+   const existing = await findById(id)
    if (!existing) return undefined
 
    const title = changes.title !== undefined ? changes.title : existing.title
    const done = changes.done !== undefined ? changes.done : existing.done
 
-   db.prepare('UPDATE tasks SET title = ?, done = ? WHERE id = ?')
-     .run(title, done ? 1 : 0, id)
-
-   return findById(id)
+   const { rows } = await pool.query(
+      'UPDATE tasks SET title = $1, done = $2 WHERE id = $3 RETURNING *',
+      [title, done, id]
+   )
+   return rowToTask(rows[0])
 }
 
-export function remove(id) {
-   const info = db.prepare('DELETE FROM tasks WHERE id = ?').run(id)
-   return info.changes > 0
+export async function remove(id) {
+   const { rowCount } = await pool.query(
+      'DELETE FROM tasks WHERE id = $1', 
+      [id]
+   )
+   return rowCount > 0
 }
