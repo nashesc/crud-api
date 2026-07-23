@@ -38,5 +38,5 @@ export async function deleteTask(id) {
    if (!existing) {
       throw new NotFoundError(`Task ${id} not found`)
    }
-   repo.remove(id)
+   await repo.remove(id)
 }

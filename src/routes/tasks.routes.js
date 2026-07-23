@@ -8,7 +8,7 @@ const router = Router()
 router.get('/', async (req, res, next) => {
    try {
       res.json(await service.getAllTasks())
-   } catch (error) {
+   } catch (err) {
       next(err)
    }
 });
