@@ -15,6 +15,16 @@ export async function signUp(email, password) {
    return data.user
 }
 
+export async function logOut(token) {
+   const { error } = await supabase.auth.signOut(token)
+
+   if (error) {
+      const authError = new Error('Failed to log out')
+      authError.name = 'AuthError'
+      throw authError
+   }
+}
+
 export async function logIn(email, password) {
    if (!email || !password) {
       throw new ValidationError('Email and password are required')

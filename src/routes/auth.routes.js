@@ -1,7 +1,17 @@
 import { Router } from 'express'
 import * as authService from '../services/auth.service.js'
+import { requireAuth } from '../middleware/require-auth.js'
 
 const router = Router()
+
+router.post('/logout', requireAuth, async (req, res, next) => {
+   try {
+      await authService.logOut(req.token)
+      res.status(204).send()
+   } catch (err) {
+      next(err)
+   }
+})
 
 router.post('/signup', async (req, res, next) => {
    try {

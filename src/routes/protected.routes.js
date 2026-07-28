@@ -1,30 +1,18 @@
 import { Router } from "express";
-import supabase from '../supabaseClient.js'
+import { requireAuth } from "../middleware/require-auth.js";
 
 const router = Router()
 
-router.get('/profile', async (req, res, next) => {
-   try {
-      const authHeader = req.headers.authorization
-      if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.split(' ')[1] === '') {
-         return res.status(401).json({ error: 'Access token required' })
-      }
+router.get('/profile', requireAuth, (req, res) => {
+   res.status(200).json({
+      id: req.user.id,
+      email: req.user.email,
+      created_at: req.user.created_at
+   })
+})
 
-      const token = authHeader.split(' ')[1]
-      const { data, error } = await supabase.auth.getUser(token)
-
-      if (error) {
-         return res.status(401).json({ error: 'Invalid or expired token' })
-      }
-
-      res.status(200).json({ 
-         id: data.user.id, 
-         email: data.user.email, 
-         created_at: data.user.created_at
-      })
-   } catch (err) {
-      next(err)
-   }
+router.get('/dashboard', requireAuth, (req, res) => {
+   res.status(200).json({ message: `Welcome to your dashboard, ${req.user.email}` })
 })
 
 export default router
