@@ -1,17 +1,18 @@
 import supabase from "../supabaseClient.js"
+import { AuthError } from "../errors.js"
 
 export async function requireAuth(req, res, next) {
    const authHeader = req.headers.authorization
 
    if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.split(' ')[1] === '') {
-      return res.status(401).json({ error: 'Access token required' })
+      throw new AuthError('Access token required')
    }
 
    const token = authHeader.split(' ')[1]
    const { data, error } = await supabase.auth.getUser(token)
 
    if (error) {
-      return res.status(401).json({ error: 'Invalid or expired token' })
+      throw new AuthError('Invalid or expired token')
    }
 
    req.user = data.user

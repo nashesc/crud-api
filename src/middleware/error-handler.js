@@ -1,4 +1,4 @@
-import { ValidationError, NotFoundError } from '../errors.js'
+import { ValidationError, NotFoundError, AuthError } from '../errors.js'
 
 export function errorHandler(err, req, res, next) {
    if (err instanceof ValidationError) {
@@ -7,7 +7,7 @@ export function errorHandler(err, req, res, next) {
    if (err instanceof NotFoundError) {
       return res.status(404).json({ error: err.message })
    }
-   if (err.name === 'AuthError') {
+   if (err instanceof AuthError) {
       return res.status(401).json({ error: err.message })
    }
    if (err.type === 'entity.parse.failed') {
