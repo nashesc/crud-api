@@ -2,6 +2,7 @@ import express from 'express'
 import swaggerUI from 'swagger-ui-express'
 import { readFileSync } from 'fs'
 import taskRouter from './routes/tasks.routes.js'
+import authRouter from './routes/auth.routes.js'
 import { errorHandler } from './middleware/error-handler.js'
 
 const app = express()
@@ -23,6 +24,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/tasks', taskRouter)
+app.use('/auth', authRouter)
 
 app.use(errorHandler)
 
