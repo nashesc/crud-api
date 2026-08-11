@@ -30,8 +30,9 @@ async function init() {
    }
 }
 
-await init()
-
-
+init().catch(err => {
+   console.warn('DB init skipped — Postgres not reachable:', err.message)
+   console.warn('/tasks routes will fail until Postgres is available. This is expected while building /enrich.')
+})
 
 export default pool
