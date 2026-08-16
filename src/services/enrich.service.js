@@ -1,5 +1,14 @@
+import { readFileSync } from 'fs'
+import OpenAI from 'openai'
 import { enrichInputSchema } from '../llm/schema.js'
 import { ValidationError } from '../errors.js'
+
+const client = new OpenAI({
+   baseURL: process.env.LLM_BASE_URL,
+   apiKey: process.env.LLM_API_KEY,
+})
+
+const SYSTEM_PROMPT = readFileSync(new URL('../../prompts/enrich-v1.md', import.meta.url), 'utf-8')
 
 export async function runEnrich(input) {
    const parsed = enrichInputSchema.safeParse(input)
@@ -15,8 +24,15 @@ export async function runEnrich(input) {
          confidence: 0.5
       }
    }
+   
+   const res = await client.chat.completions.create({
+      model: process.env.LLM_MODEL,
+      temperature: 0.2,
+      messages: [
+         { role: 'system', content: SYSTEM_PROMPT },
+         { role: 'user', content: JSON.stringify(parsed.data) }
+      ]
+   })
 
-   const err = new Error('Model call not implemented until Stage 2')
-   err.status = 501
-   throw err
+   return res.choices[0].message.content
 }
