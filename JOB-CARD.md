@@ -7,7 +7,7 @@ Input: { "title": "string", "category": "string", "description": "string, 1-4000
 
 Output: {
   "summary": "one sentence, <=200 characters",
-  "quality_flags": array of zero or more from [thin_description|generic_boilerplate|none],
+  "quality_flags": array of >=1 from [thin_description|generic_boilerplate|none],
   "confidence": 0.0-1.0
 }
 
