@@ -17,6 +17,7 @@ Return ONLY a JSON object, no other text, matching exactly:
 - A description under ~25 words must include "thin_description".
 - If the description is mostly marketing language with no real content about the book, include "generic_boilerplate".
 - If neither issue applies, quality_flags must be exactly ["none"].
+- If quality_flags contains anything other than "none", confidence must not exceed 0.6.
 
 # When unsure
 If you are not confident the description is substantive, include "thin_description" and lower confidence. Do not guess.
