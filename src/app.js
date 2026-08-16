@@ -6,6 +6,7 @@ import authRouter from './routes/auth.routes.js'
 import publicRouter from './routes/public.routes.js'
 import protectedRouter from './routes/protected.routes.js'
 import { errorHandler } from './middleware/error-handler.js'
+import enrichRouter from './routes/enrich.routes.js'
 
 const app = express()
 const openApiSpec = JSON.parse(readFileSync('./openapi.json', 'utf-8'))
@@ -29,6 +30,7 @@ app.use('/tasks', taskRouter)
 app.use('/auth', authRouter)
 app.use('/public', publicRouter)
 app.use('/protected', protectedRouter)
+app.use('/enrich', enrichRouter)
 
 app.use(errorHandler)
 
