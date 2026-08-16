@@ -1,0 +1,116 @@
+[
+   {
+      "id": "case-01-substantive-none",
+      "input": {
+         "title": "The Book Thief",
+         "category": "Historical Fiction",
+         "description": "Narrated by Death, the story follows Liesel Meminger, a young girl in Nazi Germany who steals books and shares them with her neighbors during Allied bombing raids, while hiding a Jewish fighter in her basement."
+      },
+      "expected": {
+         "acceptable_quality_flags": [["none"]],
+         "confidence_min": 0.6,
+         "confidence_max": 1.0
+      },
+      "notes": "Clear real plot content, no marketing language, well over 25 words."
+   },
+   {
+      "id": "case-02-thin",
+      "input": {
+         "title": "Silent Paths",
+         "category": "Poetry",
+         "description": "A quiet journey through loss and memory."
+      },
+      "expected": {
+         "acceptable_quality_flags": [["thin_description"]],
+         "confidence_min": 0.0,
+         "confidence_max": 0.7
+      },
+      "notes": "7 words, well under the ~25-word thin threshold."
+   },
+   {
+      "id": "case-03-generic-boilerplate",
+      "input": {
+         "title": "Unstoppable You",
+         "category": "Self-Help",
+         "description": "This incredible, life-changing book will transform the way you think, act, and live. Readers everywhere are calling it a masterpiece you cannot put down. Don't wait — grab your copy today and start your journey to a better you!"
+      },
+      "expected": {
+         "acceptable_quality_flags": [["generic_boilerplate"]],
+         "confidence_min": 0.0,
+         "confidence_max": 0.6
+      },
+      "notes": "38 words — over the thin threshold by word count, but zero actual content about the book. Should be generic_boilerplate only, NOT thin_description."
+   },
+   {
+      "id": "case-04-thin-and-generic",
+      "input": {
+         "title": "Five Stars",
+         "category": "Business",
+         "description": "Amazing must-read! Buy now!"
+      },
+      "expected": {
+         "acceptable_quality_flags": [["thin_description", "generic_boilerplate"]],
+         "confidence_min": 0.0,
+         "confidence_max": 0.5
+      },
+      "notes": "Both short AND pure marketing — should trigger both flags."
+   },
+   {
+      "id": "case-05-substantive-none-long",
+      "input": {
+         "title": "The Clockmaker's Daughter",
+         "category": "Mystery",
+         "description": "Elise inherits her grandfather's clock shop and, while cataloguing his workbench, discovers a hidden ledger detailing decades of forged timepieces sold to unsuspecting collectors across three continents."
+      },
+      "expected": {
+         "acceptable_quality_flags": [["none"]],
+         "confidence_min": 0.6,
+         "confidence_max": 1.0
+      },
+      "notes": "Specific, concrete plot content, no fluff."
+   },
+   {
+      "id": "case-06-ambiguous-review-quote-opening",
+      "type": "ambiguous",
+      "input": {
+         "title": "Tipping the Velvet",
+         "category": "Historical Fiction",
+         "description": "\"Erotic and absorbing...Written with starling power.\"--\"The New York Times Book Review \" Nan King, an oyster girl, is captivated by the music hall phenomenon Kitty Butler, a male impersonator extraordinaire treading the boards in Canterbury. Through a friend at the box office, Nan manages to visit all her shows and finally meet her heroine. Soon after, she becomes Kitty's dresser and the two head for the bright lights of Leicester Square where they begin a glittering career as music-hall stars in an all-singing and dancing double act. At the same time, behind closed doors, they admit their attraction to each other and their affair begins."
+      },
+      "expected": {
+         "acceptable_quality_flags": [["none"], ["generic_boilerplate"]],
+         "confidence_min": 0.2,
+         "confidence_max": 0.9
+      },
+      "notes": "Real production case (see logs/quarantine.jsonl) where the model previously hallucinated an invalid flag on this exact input. Opens with a promotional review quote, then substantial real plot — genuinely defensible either way. Both flag sets accepted."
+   },
+   {
+      "id": "case-07-when-unsure-borderline",
+      "type": "when_unsure",
+      "input": {
+         "title": "Between Strangers",
+         "category": "Literary Fiction",
+         "description": "A journey unfolds as two strangers navigate an unfamiliar city together, searching for answers neither is ready to fully accept or understand yet."
+      },
+      "expected": {
+         "acceptable_quality_flags": [["thin_description"]],
+         "confidence_min": 0.0,
+         "confidence_max": 0.7
+      },
+      "notes": "23 words — just under the threshold, vague content. Tests whether the model correctly defaults to thin_description + low confidence per the 'when unsure' rule rather than guessing none."
+   },
+   {
+      "id": "case-08-none-special-chars",
+      "input": {
+         "title": "Sharp Objects",
+         "category": "Thriller",
+         "description": "Camille Preaker returns to her small Missouri hometown to investigate the murders of two young girls, only to find herself drawn back into old family wounds she'd spent years trying to escape — including her own fraught relationship with her mother."
+      },
+      "expected": {
+         "acceptable_quality_flags": [["none"]],
+         "confidence_min": 0.6,
+         "confidence_max": 1.0
+      },
+      "notes": "Real plot content with an apostrophe and em dash — tests parsing robustness, not just classification."
+   }
+]
