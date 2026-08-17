@@ -73,11 +73,18 @@ async function callModel(input, repairContext) {
    }
 
    const start = Date.now()
-   const res = await withRetry(() => client.chat.completions.create({
-      model: process.env.LLM_MODEL,
+   const res = await withRetry(() => Promise.race([
+   client.chat.completions.create({ 
+      model: process.env.LLM_MODEL, 
       temperature: 0.2,
-      messages
-   }))
+      messages 
+   }),
+   new Promise((_, reject) => 
+      setTimeout(() => reject(
+         Object.assign(new Error('Model call timed out'), 
+         { status: undefined })), 30000
+      ))
+]))
    const durationMs = Date.now() - start
 
    console.log(JSON.stringify({
